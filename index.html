@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Gitlab-ci-runner by Tiger66639</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Gitlab-ci-runner</h1>
+        <h2>GitLab Runner PROJECT IS DEPRECATED NOW, PLEASE USE NEW GitLab Runner written in Go (previously named GitLab CI Multi Runner) INSTEAD</h2>
+        <a href="https://github.com/Tiger66639/gitlab-ci-runner" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a id="gitlab-runner-project-is-deprecated-now-please-use-new-gitlab-runner-written-in-go-previously-named-gitlab-ci-multi-runner-instead" class="anchor" href="#gitlab-runner-project-is-deprecated-now-please-use-new-gitlab-runner-written-in-go-previously-named-gitlab-ci-multi-runner-instead" aria-hidden="true"><span class="octicon octicon-link"></span></a>GitLab Runner PROJECT IS DEPRECATED NOW, PLEASE USE NEW <a href="https://gitlab.com/gitlab-org/gitlab-ci-multi-runner">GitLab Runner written in Go (previously named GitLab CI Multi Runner)</a> INSTEAD</h2>
+
+<h2>
+<a id="gitlab-runner" class="anchor" href="#gitlab-runner" aria-hidden="true"><span class="octicon octicon-link"></span></a>GitLab Runner</h2>
+
+<p>This is GitLab Runner repository, this application run tests and sends the results to GitLab CI.
+<a href="https://about.gitlab.com/gitlab-ci">GitLab CI</a> is the open-source continuous integration server that coordinates the testing.</p>
+
+<p><a href="https://ci.gitlab.org/projects/8?ref=master"><img src="https://ci.gitlab.org/projects/8/status.png?ref=master" alt="build status"></a>
+<a href="https://codeclimate.com/github/gitlabhq/gitlab-ci-runner"><img src="https://codeclimate.com/github/gitlabhq/gitlab-ci-runner.png" alt="Code Climate"></a></p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<h3>
+<a id="omnibus-packages-and-other-platforms" class="anchor" href="#omnibus-packages-and-other-platforms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Omnibus packages and other platforms</h3>
+
+<p>The recommended way to install this runner are the Omnibus packages.
+GitLab runners are also available for all kinds of other platforms such as Windows and OSX.
+For more information about both please see the runner section of the <a href="https://about.gitlab.com/gitlab-ci/">GitLab CI page on the website</a>.</p>
+
+<h3>
+<a id="supported-platforms" class="anchor" href="#supported-platforms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supported platforms</h3>
+
+<p>This projects officially support these Linux distributions:</p>
+
+<ul>
+<li>Ubuntu</li>
+<li>Debian</li>
+<li>CentOS</li>
+<li>Red Hat Enterprise Linux</li>
+<li>Scientific Linux</li>
+<li>Oracle Linux</li>
+</ul>
+
+<p>Mac OSX and other POSIX operating systems are not supported but will work with adaptations.
+Under Windows the runner will only work under POSIX compliant environments like Cygwin.
+Also see the alternative Runners for Windows, Scala/Java and Node please see the runner section of the <a href="https://about.gitlab.com/gitlab-ci/">GitLab CI page on the website</a>.</p>
+
+<h3>
+<a id="install-dependencies" class="anchor" href="#install-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install dependencies</h3>
+
+<p>The easiest and recommended way to install the runner is with the <a href="https://gitlab.com/gitlab-org/omnibus-gitlab-runner/blob/master/doc/install/README.md">GitLab Runner Omnibus package</a>.</p>
+
+<p>Install operating system dependent dependencies:</p>
+
+<p>a) Linux</p>
+
+<div class="highlight highlight-source-shell"><pre>sudo apt-get update -y
+sudo apt-get install -y wget curl gcc libxml2-dev libxslt-dev libcurl4-openssl-dev libreadline6-dev libc6-dev libssl-dev make build-essential zlib1g-dev openssh-server git-core libyaml-dev postfix libpq-dev libicu-dev</pre></div>
+
+<p>b) MacOSX (make sure you have <a href="http://brew.sh/">homebrew</a> installed)</p>
+
+<div class="highlight highlight-source-shell"><pre>brew install icu4c</pre></div>
+
+<p>Install Ruby from source:</p>
+
+<p>a) Linux</p>
+
+<div class="highlight highlight-source-shell"><pre>mkdir /tmp/ruby <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> /tmp/ruby
+curl --progress http://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.5.tar.gz <span class="pl-k">|</span> tar xz
+<span class="pl-c1">cd</span> ruby-2.1.5
+./configure --disable-install-rdoc
+make
+sudo make install</pre></div>
+
+<p>b) Mac OS X (make sure you have the Xcode command line tools installed), UNTESTED</p>
+
+<div class="highlight highlight-source-shell"><pre>brew update
+brew install rbenv
+brew install ruby-build
+brew install openssl
+CC=gcc-4.7 RUBY_CONFIGURE_OPTS=<span class="pl-s"><span class="pl-pds">"</span>--with-openssl-dir=<span class="pl-s"><span class="pl-pds">`</span>brew --prefix openssl<span class="pl-pds">`</span></span> --with-readline-dir=<span class="pl-s"><span class="pl-pds">`</span>brew --prefix readline<span class="pl-pds">`</span></span> --with-gcc=gcc-4.7 --enable-shared<span class="pl-pds">"</span></span> rbenv install 2.0.0-p353
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">'</span>if which rbenv &gt; /dev/null; then eval "$(rbenv init -)"; fi<span class="pl-pds">'</span></span> <span class="pl-k">&gt;&gt;</span> <span class="pl-k">~</span>/.profile
+rbenv global 2.0.0-p353</pre></div>
+
+<h3>
+<a id="setup-runners" class="anchor" href="#setup-runners" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup runners</h3>
+
+<h4>
+<a id="create-the-runner-user" class="anchor" href="#create-the-runner-user" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create the runner user</h4>
+
+<p>Ubuntu:</p>
+
+<pre><code>sudo gem install bundler
+sudo adduser --disabled-login --gecos 'GitLab Runner' gitlab_ci_runner
+</code></pre>
+
+<p>Centos:</p>
+
+<pre><code>sudo groupadd gitlab_ci_runner
+sudo useradd -g gitlab_ci_runner gitlab_ci_runner
+</code></pre>
+
+<h4>
+<a id="clone-the-gitlab-ci-runner-repository" class="anchor" href="#clone-the-gitlab-ci-runner-repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clone the gitlab-ci-runner repository</h4>
+
+<pre><code>sudo su gitlab_ci_runner
+cd ~/
+git clone https://gitlab.com/gitlab-org/gitlab-ci-runner.git
+cd gitlab-ci-runner
+git checkout VERSION_YOU_NEED # Ex. v5.0.0
+</code></pre>
+
+<p>Install the gems for the runner:</p>
+
+<pre><code>bundle install --deployment
+</code></pre>
+
+<p>Setup the runner interactively:</p>
+
+<pre><code>bundle exec ./bin/setup
+</code></pre>
+
+<p>OR</p>
+
+<p>Setup the runner non-interactively:</p>
+
+<pre><code>CI_SERVER_URL=https://ci.example.com REGISTRATION_TOKEN=replaceme bundle exec ./bin/setup
+</code></pre>
+
+<p>The registration token can be found at: <a href="http://gitlab-ci-domain.com/admin/runners">http://gitlab-ci-domain.com/admin/runners</a>, accessible through Header &gt; Runners.</p>
+
+<p>By default the configuration file for your new runner gets written in the directory where the gitlab-ci-runner source code was installed, e.g. in <code>/home/gitlab_ci_runner/gitlab-ci-runner/config.yml</code>.
+You can tell <code>bin/setup</code> to use a different directory with the <code>-C</code> switch.</p>
+
+<pre><code>bin/setup -C /my/runner/working/directory
+</code></pre>
+
+<p>You can also specify RUNNER_DESCRIPTION and RUNNER_TAG_LIST during setup.</p>
+
+<p>To unlink the runner from the coordinator you can run following command:</p>
+
+<pre><code>bin/unlink
+</code></pre>
+
+<p>It will remove the runner's information from the coordinator and remove the given token from the current runner</p>
+
+<h4>
+<a id="create-an-upstart-job-ubuntu-centos-6" class="anchor" href="#create-an-upstart-job-ubuntu-centos-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create an Upstart job (Ubuntu, Centos 6)</h4>
+
+<pre><code>exit;
+sudo cp /home/gitlab_ci_runner/gitlab-ci-runner/lib/support/upstart/gitlab-ci-runner.conf /etc/init/
+</code></pre>
+
+<h4>
+<a id="set-up-an-initd-script-other-distributions" class="anchor" href="#set-up-an-initd-script-other-distributions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set up an init.d script (other distributions)</h4>
+
+<pre><code>exit;
+sudo cp /home/gitlab_ci_runner/gitlab-ci-runner/lib/support/init.d/gitlab_ci_runner /etc/init.d/gitlab-ci-runner
+sudo chmod +x /etc/init.d/gitlab-ci-runner
+sudo update-rc.d gitlab-ci-runner defaults 21
+</code></pre>
+
+<h3>
+<a id="runners-default-file" class="anchor" href="#runners-default-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runners default file</h3>
+
+<pre><code>cd /home/gitlab_ci_runner/gitlab-ci-runner
+sudo cp ./lib/support/init.d/gitlab_ci_runner.default.example /etc/default/gitlab_ci_runner
+</code></pre>
+
+<h3>
+<a id="run" class="anchor" href="#run" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run</h3>
+
+<p>Using the system service with Upstart/init.d script:</p>
+
+<div class="highlight highlight-source-shell"><pre>sudo service gitlab-ci-runner start</pre></div>
+
+<p>OR</p>
+
+<p>Manually:</p>
+
+<div class="highlight highlight-source-shell"><pre>sudo su gitlab_ci_runner
+<span class="pl-c1">cd</span> /home/gitlab_ci_runner/gitlab-ci-runner
+bundle <span class="pl-c1">exec</span> ./bin/runner</pre></div>
+
+<p>If you are using a custom working directory you can tell the runner about it with the <code>-C</code> switch.
+The default working directory is the directory where the gitlab-ci-runner source code was installed, e.g. <code>/home/gitlab_ci_runner/gitlab-ci-runner</code>.</p>
+
+<pre><code>bundle exec bin/runner -C /my/runner/working/directory
+</code></pre>
+
+<h3>
+<a id="update" class="anchor" href="#update" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update</h3>
+
+<p>In order to update the runner to a new version just go to runner directory and do next:</p>
+
+<div class="highlight highlight-source-shell"><pre>sudo su gitlab_ci_runner
+<span class="pl-c1">cd</span> <span class="pl-k">~</span>/gitlab-ci-runner
+git fetch
+git checkout VERSION_YOU_NEED <span class="pl-c"># Ex. v5.0.0</span>
+bundle</pre></div>
+
+<p>And restart runner</p>
+
+<h2>
+<a id="easily-add-runners-to-existing-gitlab-ci" class="anchor" href="#easily-add-runners-to-existing-gitlab-ci" aria-hidden="true"><span class="octicon octicon-link"></span></a>Easily add Runners to existing GitLab CI</h2>
+
+<p>See <a href="https://gitlab.com/gitlab-org/omnibus-gitlab-runner/blob/master/doc/install/README.md">omnibus gitlab runner</a>.</p>
+
+<h2>
+<a id="development" class="anchor" href="#development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Development</h2>
+
+<p>To work on the GitLab runner we recommend you install the <a href="https://gitlab.com/gitlab-org/gitlab-development-kit">GitLab Development Kit</a>.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Tiger66639/gitlab-ci-runner/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Tiger66639/gitlab-ci-runner/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Tiger66639/gitlab-ci-runner"></a> is maintained by <a href="https://github.com/Tiger66639">Tiger66639</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
